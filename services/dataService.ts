@@ -150,8 +150,10 @@ function extractGovernanceKeywords(
  * Load all CSV files and join them into LegislationItem array
  */
 export async function loadLegislationData(): Promise<LoadDataResult> {
-  // Return cached data if available
-  if (dataCacheResult) {
+  // Return cached data ONLY if we have both data and a valid last processed date
+  // We don't cache if lastProcessed is 'Unknown' to allow retries
+  if (dataCacheResult && dataCacheResult.lastProcessed !== 'Unknown') {
+    console.log('Returning cached data with last processed date:', dataCacheResult.lastProcessed);
     return dataCacheResult;
   }
 
