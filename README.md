@@ -1,14 +1,14 @@
 # LAPSE Dashboard
 
-An interactive research platform exploring Canadian federal and British Columbia provincial legislation relevant to Pacific salmon conservation.
+An interactive research platform exploring Canadian federal and British Columbia provincial legislation relevant to Pacific salmon stewardship.
 
 ## Overview
 
-The **LAPSE Dashboard** (Legislation Analysis for Pacific Salmon Ecology) is a React-based application designed to help policymakers, researchers, and environmental professionals understand and analyze legislation affecting Pacific salmon conservation. The app maps federal and provincial legislation to management domains and IUCN threat categories, enabling comprehensive policy research and cross-domain analysis.
+The **LAPSE Dashboard** is a React-based application designed to help policymakers, researchers, and environmental professionals understand and analyze legislation affecting Pacific salmon. The app maps federal and provincial legislation to management domains and IUCN-CMP threat categories, enabling comprehensive policy research and cross-domain analysis.
 
 ### Key Features
 - **Multi-dimensional filtering**: Filter legislation by jurisdiction (Federal/Provincial), management domain, act name, and keywords
-- **Interactive visualizations**: Explore keyword frequency, IUCN threat distributions, and legislation coverage
+- **Interactive visualizations**: Explore keyword frequency, IUCN-CMP threat distributions, and legislation coverage
 - **Detailed legislation search**: Browse and search individual legislative clauses with full context
 - **Domain mapping**: Understand how legislation connects to specific management domains and conservation threat categories
 - **Responsive design**: Fully responsive interface for desktop and tablet viewing
