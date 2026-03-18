@@ -601,7 +601,7 @@ const App: React.FC = () => {
 
             <a
               className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 px-4 py-3 rounded-xl shadow-sm w-full sm:w-auto lg:flex-1 min-w-[220px] hover:shadow-md transition-shadow"
-              href="https://ennsjoe.github.io/salmon_management_domains_compendium/LAPSE-Dashboard-About.html"
+              href="https://dfo-pacific-science.github.io/LAPSE_dashboard/LAPSE-Dashboard-About.html"
               target="_blank"
               rel="noreferrer"
             >
@@ -610,7 +610,22 @@ const App: React.FC = () => {
               </svg>
               <div className="text-xs text-emerald-900">
                 <div className="font-black uppercase tracking-widest text-[11px] text-emerald-700">About LAPSE Dashboard</div>
-                <div className="mt-0.5 text-emerald-800">Open the About page</div>
+                <div className="mt-0.5 text-emerald-800">Project information hub</div>
+              </div>
+            </a>
+
+            <a
+              className="flex items-center gap-3 bg-blue-50 border border-blue-200 px-4 py-3 rounded-xl shadow-sm w-full sm:w-auto lg:flex-1 min-w-[220px] hover:shadow-md transition-shadow"
+              href="https://dfo-pacific-science.github.io/LAPSE_dashboard/LAPSE-Technical-Brief.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <div className="text-xs text-blue-900">
+                <div className="font-black uppercase tracking-widest text-[11px] text-blue-700">Technical Brief</div>
+                <div className="mt-0.5 text-blue-800">User manual & guide</div>
               </div>
             </a>
           </div>
