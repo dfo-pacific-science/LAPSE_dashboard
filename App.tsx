@@ -67,14 +67,15 @@ const App: React.FC = () => {
     setError(null);
     
     try {
-      const legislationData = await dataService.loadLegislationData();
+      const result = await dataService.loadLegislationData();
+      const legislationData = result.data;
       
       // Count unique legislation records
       const uniqueLegislationIds = new Set(legislationData.map(item => item.legislation_id));
       
       setData(legislationData);
       setTotalLegislation(uniqueLegislationIds.size);
-      setDataLastProcessed(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+      setDataLastProcessed(result.lastProcessed);
       setError(null);
       setIsLoading(false);
     } catch (err: any) {

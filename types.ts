@@ -80,3 +80,8 @@ export interface ChartData {
   name: string;
   value: number;
 }
+
+export interface LoadDataResult {
+  data: LegislationItem[];
+  lastProcessed: string;
+}

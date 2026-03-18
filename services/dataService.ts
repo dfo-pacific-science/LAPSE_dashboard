@@ -4,11 +4,12 @@ import {
   ParagraphRow, 
   LegislationRow, 
   IucnKeywordRow, 
-  GovernanceKeywordRow 
+  GovernanceKeywordRow,
+  LoadDataResult
 } from '../types';
 
 // Cache for loaded data
-let dataCache: LegislationItem[] | null = null;
+let dataCacheResult: LoadDataResult | null = null;
 let governanceKeywordCache: Map<string, string[]> | null = null;
 
 /**
@@ -36,6 +37,53 @@ async function parseCSV<T>(url: string): Promise<T[]> {
       error: (error) => reject(error),
     });
   });
+}
+
+/**
+ * Get the last modified date of a CSV file from HTTP headers
+ */
+async function getCSVLastModifiedDate(url: string): Promise<string> {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    if (!response.ok) {
+      // Fall back to GET request if HEAD is not supported
+      return getCSVLastModifiedDateViaGET(url);
+    }
+    
+    const lastModified = response.headers.get('Last-Modified');
+    if (lastModified) {
+      const date = new Date(lastModified);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    
+    return 'Unknown';
+  } catch (error) {
+    console.error('Error fetching Last-Modified header:', error);
+    return 'Unknown';
+  }
+}
+
+/**
+ * Fallback: Get last modified date via GET request if HEAD is not supported
+ */
+async function getCSVLastModifiedDateViaGET(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      return 'Unknown';
+    }
+    
+    const lastModified = response.headers.get('Last-Modified');
+    if (lastModified) {
+      const date = new Date(lastModified);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    
+    return 'Unknown';
+  } catch (error) {
+    console.error('Error fetching Last-Modified date via GET:', error);
+    return 'Unknown';
+  }
 }
 
 /**
@@ -89,10 +137,10 @@ function extractGovernanceKeywords(
 /**
  * Load all CSV files and join them into LegislationItem array
  */
-export async function loadLegislationData(): Promise<LegislationItem[]> {
+export async function loadLegislationData(): Promise<LoadDataResult> {
   // Return cached data if available
-  if (dataCache) {
-    return dataCache;
+  if (dataCacheResult) {
+    return dataCacheResult;
   }
 
   console.log('Loading CSV files...');
@@ -101,17 +149,22 @@ export async function loadLegislationData(): Promise<LegislationItem[]> {
   // In development: files are at /filename.csv
   // In production with GitHub Pages: files are at /LAPSE_dashboard/filename.csv
   const basePath = import.meta.env.BASE_URL || '/';
+  const paragraphUrl = `${basePath}paragraph_output.csv`;
   
   // Load all CSVs in parallel
   const [paragraphRows, legislationRows, iucnKeywordRows, governanceKeywordRows] = await Promise.all([
-    parseCSV<ParagraphRow>(`${basePath}paragraph_output.csv`),
+    parseCSV<ParagraphRow>(paragraphUrl),
     parseCSV<LegislationRow>(`${basePath}legislation_output.csv`),
     parseCSV<IucnKeywordRow>(`${basePath}iucn_l2_keywords.csv`),
     parseCSV<GovernanceKeywordRow>(`${basePath}governance_keywords.csv`),
   ]);
 
+  // Get the last modified date from the paragraph CSV
+  const lastProcessedDate = await getCSVLastModifiedDate(paragraphUrl);
+  
   console.log(`Loaded ${paragraphRows.length} paragraphs, ${legislationRows.length} legislation records`);
   console.log(`Loaded ${iucnKeywordRows.length} IUCN keywords, ${governanceKeywordRows.length} governance keywords`);
+  console.log(`Data last processed: ${lastProcessedDate}`);
 
   // Create lookup maps
   const legislationMap = new Map<string, LegislationRow>();
@@ -192,12 +245,18 @@ export async function loadLegislationData(): Promise<LegislationItem[]> {
     };
   });
 
+  // Create the result object with data and last processed date
+  const result: LoadDataResult = {
+    data: joinedData,
+    lastProcessed: lastProcessedDate
+  };
+  
   // Cache the result
-  dataCache = joinedData;
+  dataCacheResult = result;
   
   console.log(`Successfully joined ${joinedData.length} legislation items`);
   
-  return joinedData;
+  return result;
 }
 
 /**
@@ -250,6 +309,6 @@ export function filterKeywordsByDomain(
  * Clear the data cache (useful for testing or reloading)
  */
 export function clearCache(): void {
-  dataCache = null;
+  dataCacheResult = null;
   governanceKeywordCache = null;
 }
