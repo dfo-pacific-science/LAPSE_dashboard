@@ -44,22 +44,26 @@ async function parseCSV<T>(url: string): Promise<T[]> {
  */
 async function getCSVLastModifiedDate(url: string): Promise<string> {
   try {
+    console.log(`Fetching Last-Modified header for: ${url}`);
     const response = await fetch(url, { method: 'HEAD' });
-    if (!response.ok) {
-      // Fall back to GET request if HEAD is not supported
-      return getCSVLastModifiedDateViaGET(url);
-    }
     
     const lastModified = response.headers.get('Last-Modified');
+    console.log(`HEAD response status: ${response.status}, Last-Modified: ${lastModified}`);
+    
     if (lastModified) {
       const date = new Date(lastModified);
-      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      console.log(`Successfully parsed date: ${formattedDate}`);
+      return formattedDate;
     }
     
-    return 'Unknown';
+    // If HEAD didn't return Last-Modified, try GET
+    console.log('No Last-Modified from HEAD, falling back to GET...');
+    return await getCSVLastModifiedDateViaGET(url);
   } catch (error) {
-    console.error('Error fetching Last-Modified header:', error);
-    return 'Unknown';
+    console.error('Error fetching Last-Modified header via HEAD:', error);
+    // Fall back to GET request if HEAD fails
+    return await getCSVLastModifiedDateViaGET(url);
   }
 }
 
@@ -68,17 +72,25 @@ async function getCSVLastModifiedDate(url: string): Promise<string> {
  */
 async function getCSVLastModifiedDateViaGET(url: string): Promise<string> {
   try {
+    console.log(`Fetching Last-Modified header via GET for: ${url}`);
     const response = await fetch(url);
+    
     if (!response.ok) {
+      console.error(`GET request failed with status: ${response.status}`);
       return 'Unknown';
     }
     
     const lastModified = response.headers.get('Last-Modified');
+    console.log(`GET response Last-Modified: ${lastModified}`);
+    
     if (lastModified) {
       const date = new Date(lastModified);
-      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      console.log(`Successfully parsed date from GET: ${formattedDate}`);
+      return formattedDate;
     }
     
+    console.warn('No Last-Modified header found in response');
     return 'Unknown';
   } catch (error) {
     console.error('Error fetching Last-Modified date via GET:', error);

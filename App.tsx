@@ -70,11 +70,14 @@ const App: React.FC = () => {
       const result = await dataService.loadLegislationData();
       const legislationData = result.data;
       
+      console.log('Data load result:', result);
+      
       // Count unique legislation records
       const uniqueLegislationIds = new Set(legislationData.map(item => item.legislation_id));
       
       setData(legislationData);
       setTotalLegislation(uniqueLegislationIds.size);
+      console.log(`Setting dataLastProcessed to: ${result.lastProcessed}`);
       setDataLastProcessed(result.lastProcessed);
       setError(null);
       setIsLoading(false);
