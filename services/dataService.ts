@@ -173,8 +173,8 @@ export async function loadLegislationData(): Promise<LoadDataResult> {
     parseCSV<GovernanceKeywordRow>(`${basePath}governance_keywords.csv`),
   ]);
 
-  // Get the last modified date from the paragraph CSV
-  const lastProcessedDate = await getCSVLastModifiedDate(paragraphUrl);
+  // For now, use a hardcoded data processing date
+  const lastProcessedDate = 'January 22, 2026';
   
   console.log(`Loaded ${paragraphRows.length} paragraphs, ${legislationRows.length} legislation records`);
   console.log(`Loaded ${iucnKeywordRows.length} IUCN keywords, ${governanceKeywordRows.length} governance keywords`);
